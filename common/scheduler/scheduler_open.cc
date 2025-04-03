@@ -322,6 +322,7 @@ void SchedulerOpen::initDVFSPolicy(String policyName) {
 		thermalModel = new ThermalModel((unsigned int)coreRows, (unsigned int)coreColumns, thermalModelFilename, ambientTemperature, maxTemperature, inactivePower, tdp);
 
 		dvfsPolicy = new DVFSTSP(thermalModel, performanceCounters, coreRows, coreColumns, minFrequency, maxFrequency, frequencyStepSize);
+	}
 	else if (policyName == "ondemand") {
 		float upThreshold = Sim()->getCfg()->getFloat("scheduler/open/dvfs/ondemand/up_threshold");
 		float downThreshold = Sim()->getCfg()->getFloat("scheduler/open/dvfs/ondemand/down_threshold");
@@ -340,7 +341,7 @@ void SchedulerOpen::initDVFSPolicy(String policyName) {
 			dtmRecoveredTemperature
 		)
 	}
-	} else {
+	else {
 		cout << "\n[Scheduler] [Error]: Unknown DVFS Algorithm" << endl;
  		exit (1);
 	}
