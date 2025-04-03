@@ -21,6 +21,10 @@ BENCHMARKS = os.path.join(SNIPER_BASE, 'benchmarks')
 BATCH_START = datetime.datetime.now().strftime('%Y-%m-%d_%H.%M')
 
 
+def ondemand_demo():
+    run(['{:.1f}GHz'.format(4), 'ondemand', 'fastDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+
+
 def change_base_configuration(base_configuration):
     base_cfg = os.path.join(SNIPER_BASE, 'config/base.cfg')
     with open(base_cfg, 'r') as f:
@@ -55,7 +59,7 @@ def prev_run_cleanup():
     for f in os.listdir(BENCHMARKS):
         if ('output.' in f) or ('.264' in f) or ('poses.' in f) or ('app_mapping' in f) :
             os.remove(os.path.join(BENCHMARKS, f))
-        
+
 
 def save_output(base_configuration, benchmark, console_output, cpistack, started, ended):
     benchmark_text = benchmark
@@ -95,7 +99,7 @@ def save_output(base_configuration, benchmark, console_output, cpistack, started
         if not re.match(pattern, f):
             continue
         shutil.copy(os.path.join(BENCHMARKS, f), directory)
-    
+
     for f in os.listdir(BENCHMARKS):
         if 'output.' in f:
             shutil.copy(os.path.join(BENCHMARKS, f), directory)
@@ -130,8 +134,8 @@ def run(base_configuration, benchmark, ignore_error=False, perforation_script: s
         periodicPower = 100000
 
     if not perforation_script:
-        perforation_script = 'magic_perforation_rate:' 
-   
+        perforation_script = 'magic_perforation_rate:'
+
     args = '-n {number_cores} -c {config} --benchmarks={benchmark} --no-roi --sim-end=last -senergystats:{periodic} -speriodic-power:{periodic}{script}{perforation}{benchmark_options}' \
         .format(number_cores=NUMBER_CORES,
                 config=SNIPER_CONFIG,
@@ -140,7 +144,7 @@ def run(base_configuration, benchmark, ignore_error=False, perforation_script: s
                 script= ''.join([' -s' + s for s in SCRIPTS]),
                 perforation=' -s'+perforation_script,
                 benchmark_options=''.join([' -B ' + opt for opt in benchmark_options]))
-    
+
     console_output = ''
 
     print(args)
@@ -214,7 +218,7 @@ def get_instance(benchmark, parallelism, input_set='small'):
         'splash2-water.nsq': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
         'splash2-water.sp': [1, 2, 0, 4, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 16],  # other parallelism values run but are suboptimal -> don't allow in the first place
     }
-    
+
     ps = threads[benchmark]
     if parallelism <= 0 or parallelism not in ps:
         raise Infeasible()
@@ -310,7 +314,7 @@ def example_symmetric_perforation():
         perforation_rate = str(50)
         for freq in (4, ):
             for parallelism in (4,):
-                run(['{:.1f}GHz'.format(freq), 'maxFreq', 'slowDVFS'], get_instance(benchmark, parallelism, input_set='simsmall'), 
+                run(['{:.1f}GHz'.format(freq), 'maxFreq', 'slowDVFS'], get_instance(benchmark, parallelism, input_set='simsmall'),
                     perforation_script="magic_perforation_rate:%s" % perforation_rate )
 
 def example_asymmetric_perforation():
@@ -322,14 +326,14 @@ def example_asymmetric_perforation():
                         #("parsec-x264", 6),
                         #("parsec-canneal", 3),
                     ):
-    
+
         loop_rates = [  str(i*10) for i in range(benchmark[1]) ]
 
         min_parallelism = get_feasible_parallelisms(benchmark[0])[0]
         max_parallelism = get_feasible_parallelisms(benchmark[0])[-1]
         for freq in (4, ):
             for parallelism in (4,):
-                run(['{:.1f}GHz'.format(freq), 'maxFreq', 'slowDVFS'], get_instance(benchmark[0], parallelism, input_set='simsmall'), 
+                run(['{:.1f}GHz'.format(freq), 'maxFreq', 'slowDVFS'], get_instance(benchmark[0], parallelism, input_set='simsmall'),
                     perforation_script='magic_perforation_rate:%s' % ','.join(loop_rates))
 
 
@@ -358,18 +362,19 @@ def multi_program():
 
     run(base_configuration, benchmarks)
 
-    
+
 def test_static_power():
     run(['4.0GHz', 'testStaticPower', 'slowDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
 
 def main():
-    example()
+    # example()
+    ondemand_demo()
     #test_static_power()
     # multi_program()
 
     # example_symmetric_perforation()
     # example_asymmetric_perforation()
-    
+
 if __name__ == '__main__':
     main()
