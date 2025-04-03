@@ -339,7 +339,7 @@ void SchedulerOpen::initDVFSPolicy(String policyName) {
 			downThreshold,
 			dtmCriticalTemperature,
 			dtmRecoveredTemperature
-		)
+		);
 	}
 	else {
 		cout << "\n[Scheduler] [Error]: Unknown DVFS Algorithm" << endl;
