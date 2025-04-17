@@ -409,7 +409,7 @@ def test_multiprogramming():
 
 def main():
     # example()
-    test_multithreaded([1, 2, 3, 4])
+    test_multithreaded([2, 3, 4])
     test_dvfs(['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['3.0GHz', '4.0GHz', '5.0GHz'])
     test_thread_migration(['80cc', '70cc', '60cc'], ['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['2.0GHz', '4.0GHz'])
     test_multiprogramming()
