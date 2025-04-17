@@ -313,11 +313,11 @@ def example_symmetric_perforation():
 
         perforation_rate = str(50)
         for freq in (4, ):
-            for parallelism in (4,):
-                run(['{:.1f}GHz'.format(freq), 'maxFreq', 'slowDVFS'], get_instance(benchmark, parallelism, input_set='simsmall'),
+            # for parallelism in (4,):
+                run(['{:.1f}GHz'.format(freq), 'testStaticPower', 'slowDVFS'], get_instance(benchmark, 3, input_set='simsmall'),
                     perforation_script="magic_perforation_rate:%s" % perforation_rate )
 
-def example_asymmetric_perforation():
+def example_asymmetric_perforation(dvfs):
     for benchmark in (
                         ("parsec-blackscholes", 1),
                         #("parsec-bodytrack", 6),
@@ -332,8 +332,9 @@ def example_asymmetric_perforation():
         min_parallelism = get_feasible_parallelisms(benchmark[0])[0]
         max_parallelism = get_feasible_parallelisms(benchmark[0])[-1]
         for freq in (4, ):
-            for parallelism in (4,):
-                run(['{:.1f}GHz'.format(freq), 'maxFreq', 'slowDVFS'], get_instance(benchmark[0], parallelism, input_set='simsmall'),
+            # for parallelism in (4,):
+            for dvfs_mode in dvfs:
+                run(['{:.1f}GHz'.format(freq), 'testStaticPower', dvfs_mode], get_instance(benchmark[0], 3, input_set='simsmall'),
                     perforation_script='magic_perforation_rate:%s' % ','.join(loop_rates))
 
 
@@ -362,14 +363,57 @@ def multi_program():
 
     run(base_configuration, benchmarks)
 
+def test_multithreaded(threads):
+    for n_threads in threads:
+        run(['4.0GHz', 'testStaticPower', 'slowDVFS'], get_instance('parsec-blackscholes', n_threads, input_set='simsmall'))
+
+def test_dvfs(dvfs, critical_temperature):
+    for dvfs_mode in dvfs:
+        run(['4.0GHz', 'testStaticPower', dvfs_mode], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+
+    example_symmetric_perforation(dvfs)
+    example_asymmetric_perforation(dvfs)
+
+def test_thread_migration(coldestcores, dvfs, frequencies):
+    for core_temperature in coldestcores:
+        for dvfs_mode in dvfs:
+            for freq in frequencies:
+                run([freq, 'testStaticPower', dvfs_mode, core_temperature], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+
+
+
+def coldestcore_demo():
+    run(['{:1f}Ghz'.format(2.4), 'maxFreq', 'slowDVFS', 'coldestCore'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
 def test_static_power():
     run(['4.0GHz', 'testStaticPower', 'slowDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
+def test_static():
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+
+def test_static_thread_migration():
+    run(['4.0GHz', 'maxFreq', 'slowDVFS','coldestCore'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+
+#run different tests with different no of threads for multithreading (1-2-3-4 thread)
+
+#for dvfs replace max freq with onDemand, always check in base config will be parsed against base.cfg(slow medium and fast with those comupations of cpufreq and )
+
+#change freq, slow medium and fast, critical temp(60,70,80) see how it behaves: for ex: high ct - more thrashing (same thing side by side comparison just with coldest core)
+
+#multiprograming
+
+def test_multiprogramming():
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-4,parsec-streamcluster-simsmall-4') # change back to 1 if breaks
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-blackscholes-simsmall-4,parsec-blackscholes-simsmall-4')
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-4,parsec-blackscholes-simsmall-4')
 
 def main():
     # example()
-    ondemand_demo()
+    test_multithreaded([1, 2, 3, 4])
+    test_dvfs(['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['3.0GHz', '4.0GHz', '5.0GHz'])
+    test_thread_migration(['80cc', '70cc', '60cc'], ['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['2.0GHz', '4.0GHz'])
+    test_multiprogramming()
+    # ondemand_demo()
     #test_static_power()
     # multi_program()
 
