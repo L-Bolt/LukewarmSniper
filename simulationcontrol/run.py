@@ -371,7 +371,7 @@ def test_dvfs(dvfs, critical_temperature):
     for dvfs_mode in dvfs:
         run(['4.0GHz', 'testStaticPower', dvfs_mode], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
-    example_symmetric_perforation(dvfs)
+    example_symmetric_perforation()
     example_asymmetric_perforation(dvfs)
 
 def test_thread_migration(coldestcores, dvfs, frequencies):
@@ -403,9 +403,9 @@ def test_static_thread_migration():
 #multiprograming
 
 def test_multiprogramming():
-    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-4,parsec-streamcluster-simsmall-4') # change back to 1 if breaks
-    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-blackscholes-simsmall-4,parsec-blackscholes-simsmall-4')
-    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-4,parsec-blackscholes-simsmall-4')
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-1,parsec-streamcluster-simsmall-1') # change back to 1 if breaks
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-blackscholes-simsmall-1,parsec-blackscholes-simsmall-1')
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-1,parsec-blackscholes-simsmall-1')
 
 def main():
     # example()
