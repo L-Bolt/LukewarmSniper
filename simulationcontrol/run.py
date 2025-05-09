@@ -26,7 +26,7 @@ def ondemand_demo():
 
 
 def change_base_configuration(base_configuration):
-    base_cfg = os.path.join(SNIPER_BASE, 'config/base.cfg')
+    base_cfg = os.path.join(SNIPER_BASE, 'config/kingscross-nuca.cfg')
     with open(base_cfg, 'r') as f:
         content = f.read()
     with open(base_cfg, 'w') as f:
@@ -394,31 +394,13 @@ def test_static():
 def test_static_thread_migration():
     run(['4.0GHz', 'maxFreq', 'slowDVFS','coldestCore'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
-#run different tests with different no of threads for multithreading (1-2-3-4 thread)
-
-#for dvfs replace max freq with onDemand, always check in base config will be parsed against base.cfg(slow medium and fast with those comupations of cpufreq and )
-
-#change freq, slow medium and fast, critical temp(60,70,80) see how it behaves: for ex: high ct - more thrashing (same thing side by side comparison just with coldest core)
-
-#multiprograming
-
 def test_multiprogramming():
     run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-1,parsec-streamcluster-simsmall-1') # change back to 1 if breaks
     run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-blackscholes-simsmall-1,parsec-blackscholes-simsmall-1')
     run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-1,parsec-blackscholes-simsmall-1')
 
 def main():
-    # example()
-    test_multithreaded([2, 3, 4])
-    test_dvfs(['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['3.0GHz', '4.0GHz', '5.0GHz'])
-    test_thread_migration(['80cc', '70cc', '60cc'], ['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['2.0GHz', '4.0GHz'])
-    test_multiprogramming()
-    # ondemand_demo()
-    #test_static_power()
-    # multi_program()
-
-    # example_symmetric_perforation()
-    # example_asymmetric_perforation()
+    run(['{:1f}Ghz'.format(2.4), 'maxFreq', 'slowDVFS', 'taskReassign'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
 if __name__ == '__main__':
     main()
