@@ -29,9 +29,9 @@ std::vector<int> ColdestCore::map(
     //logTemperatures(availableCores);
 
     for (; taskCoreRequirement > 0; taskCoreRequirement--) {
+        //cout << "taskCoreRequirement is " << taskCoreRequirement << endl;
         //int coldestCore = getColdestCore(availableCores);
         int coldestCore = getPeriodicCore(availableCores);
-        cout << "[checking]Selectedc core is " << coldestCore << endl;
 
         if (coldestCore == -1) {
             // not enough free cores
@@ -61,34 +61,22 @@ std::vector<migration> ColdestCore::migrate(
     for (int c = 0; c < coreRows * coreColumns; c++) {
         // if (activeCores.at(c)) {
         //     float temperature = performanceCounters->getTemperatureOfCore(c);
-        //     if (temperature > criticalTemperature) {
+        //     if (temperature > criticalTemperature || 1) {
         //         cout << "[Scheduler][coldestCore-migrate]: core" << c << " too hot (";
         //         cout << fixed << setprecision(1) << temperature << ") -> migrate";
-        //         logTemperatures(availableCores);
+        //         //logTemperatures(availableCores);
 
-        //         int targetCore = getColdestCore(availableCores);
 
-        //         if (targetCore == -1) {
-        //             cout << "[Scheduler][coldestCore-migrate]: no target core found, cannot migrate" << endl;
-        //         } else {
-        //             migration m;
-        //             m.fromCore = c;
-        //             m.toCore = targetCore;
-        //             m.swap = false;
-        //             migrations.push_back(m);
-        //             availableCores.at(targetCore) = false;
-        //         }
-        //     }
-        // }
         if (activeCores.at(c)) {
             float temperature = performanceCounters->getTemperatureOfCore(c);
-            if (temperature > criticalTemperature  || 1) {
+            if (temperature > criticalTemperature || 1) {
                 cout << "[Scheduler][coldestCore-migrate]: core" << c << " too hot (";
                 cout << fixed << setprecision(1) << temperature << ") -> migrate";
+                cout << endl;
                 //logTemperatures(availableCores);
 
                 //int targetCore = getColdestCore(availableCores);
-                int targetCore = getPeriodicCore(activeCores);
+                int targetCore = getPeriodicCore(availableCores);
 
                 if (targetCore == -1) {
                     cout << "[Scheduler][coldestCore-migrate]: no target core found, cannot migrate" << endl;
@@ -102,6 +90,7 @@ std::vector<migration> ColdestCore::migrate(
                 }
             }
         }
+
     }
     return migrations;
 }
@@ -118,39 +107,26 @@ int ColdestCore::getColdestCore(const std::vector<bool> &availableCores) {
                 coldestTemperature = temperature;
             }
         }
-    }
-    
+    }   
     return coldestCore;
-    
 }
 
-int ColdestCore::getPeriodicCore(const std::vector<bool> &activeCores){
-    int periodicCore = 0;
+int ColdestCore::getPeriodicCore(const std::vector<bool> &availableCores){
     for (int c = 0; c < coreRows * coreColumns; c++) {  
-        if (activeCores.at(c)) {
-            if(c == 0) periodicCore = 56;
-            else if (c == 56) periodicCore = 63;
-            else if (c == 63) periodicCore = 7;
-            else if (c == 7) periodicCore = 0;
+        if (availableCores.at(c)) {
+            if(c == 0)  return availableCores.at(56) ?56 : c;
+            else if (c == 1) return availableCores.at(48) ?48 : c;
+            else if (c == 48) return availableCores.at(62) ?62 : c;
+            else if (c == 56) return availableCores.at(63) ?63 : c;
+            else if (c == 62) return availableCores.at(14) ?14 : c;
+            else if (c == 63) return availableCores.at(7) ?7 : c;
+            else if (c == 7) return availableCores.at(0) ?0 : c;
+            else if (c == 14) return availableCores.at(1) ?1 : c;
         }
     }
-    // for (int c = 0; c < coreRows * coreColumns; c++) {  
-    //     if (activeCores.at(c)) {
-    //         if(c == 27) periodicCore = 28;
-    //         else if (c == 28) periodicCore = 36;
-    //         else if (c == 36) periodicCore = 35;
-    //         else if (c == 35) periodicCore = 27;
-    //     }
-    // }
-    return periodicCore;
 
     
 }
-
-// int ColdestCore::getNextCore(const std::vector<bool> &activeCores){
-
-
-// }
 
 void ColdestCore::logTemperatures(const std::vector<bool> &availableCores) {
     cout << "[Scheduler][coldestCore-map]: temperatures of available cores:" << endl;

@@ -18,16 +18,21 @@ std::vector<int> DVFSTSP::getFrequencies(const std::vector<int> &oldFrequencies,
 	for (unsigned int coreCounter = 0; coreCounter < coreRows * coreColumns; coreCounter++) {
 		if (activeCores.at(coreCounter)) {
 			float power = performanceCounters->getPowerOfCore(coreCounter);
+			float historyPower = performanceCounters->getHistoryPowerOfCore(coreCounter);
+			int lines = performanceCounters-> getPowerTraceLines();
 			float temperature = performanceCounters->getTemperatureOfCore(coreCounter);
 			int frequency = oldFrequencies.at(coreCounter);
 			float utilization = performanceCounters->getUtilizationOfCore(coreCounter);
 
 			cout << "[Scheduler][DVFSTSP]: Core " << setw(2) << coreCounter << ":";
 			cout << " P=" << fixed << setprecision(3) << power << " W";
+			cout << " P_history = " <<  fixed << setprecision(3) << historyPower << " W";
 			cout << " (budget: " << fixed << setprecision(3) << tsp << " W)";
 			cout << " f=" << frequency << " MHz";
 			cout << " T=" << fixed << setprecision(1) << temperature << " °C";
 			cout << " utilization=" << fixed << setprecision(3) << utilization << endl;
+			
+
 
 			int expectedGoodFrequency = PowerModel::getExpectedGoodFrequency(frequency, power, tsp, minFrequency, maxFrequency, frequencyStepSize);
 			frequencies.at(coreCounter) = expectedGoodFrequency;

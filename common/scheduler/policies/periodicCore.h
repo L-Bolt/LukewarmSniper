@@ -3,17 +3,17 @@
  * and migrates threads from hot cores to the coldest cores.
  */
 
-#ifndef __COLDESTCORE_H
-#define __COLDESTCORE_H
+#ifndef __PERIODICCORE_H
+#define __PERIODICCORE_H
 
 #include <vector>
 #include "mappingpolicy.h"
 #include "migrationpolicy.h"
 #include "performance_counters.h"
 
-class ColdestCore : public MappingPolicy, public MigrationPolicy {
+class PeriodicCore : public MappingPolicy, public MigrationPolicy {
 public:
-    ColdestCore(
+    PeriodicCore(
         const PerformanceCounters *performanceCounters,
         int coreRows,
         int coreColumns,
