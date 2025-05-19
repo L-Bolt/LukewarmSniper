@@ -22,6 +22,11 @@ class ColdPotatoImproved : public MappingPolicy, public MigrationPolicy {
         const std::vector<bool> &activeCores);
 
    private:
+    struct CoreTemp {
+        int core_id;
+        float temperature;
+    };
+
     const PerformanceCounters *performanceCounters;
     unsigned int coreRows;
     unsigned int coreColumns;

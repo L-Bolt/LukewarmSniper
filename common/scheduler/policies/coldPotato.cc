@@ -44,26 +44,23 @@ std::vector<migration> ColdPotato::migrate(
         availableCores.at(c) = taskIds.at(c) == -1;
     }
     for (int c = 0; c < coreRows * coreColumns; c++) {
+        uint64_t current_time = time.getNS();
         if (activeCores.at(c)) {
             float temperature = performanceCounters->getTemperatureOfCore(c);
-            if (temperature > criticalTemperature || (prevTime == -1 || (time.getNS() - prevTime >= 5))) {
-                cout << "[Scheduler][coldPotato-migrate]: core" << c
-                     << " too hot (";
-                cout << fixed << setprecision(1) << temperature
-                     << ") -> migrate";
-                logTemperatures(availableCores);
+            cout << "[Scheduler][coldPotato-migrate]: core" << c << " temperature (";
+            cout << fixed << setprecision(1) << temperature << ") -> migrate";
+            logTemperatures(availableCores);
 
-                for (int i = 0; i < 4; i++) {
-                    migration m;
-                    m.fromCore = i;
-                    m.toCore = (i + 1) % 4;
-                    m.swap = false;
-                    migrations.push_back(m);
-                    availableCores.at((i + 1) % 4) = false;
-                }
-
-                prevTime = time.getNS();
+            for (int i = 0; i < 4; i++) {
+                migration m;
+                m.fromCore = i;
+                m.toCore = (i + 1) % 4;
+                m.swap = false;
+                migrations.push_back(m);
+                availableCores.at((i + 1) % 4) = false;
             }
+
+            prevTime = current_time;
         }
     }
     return migrations;

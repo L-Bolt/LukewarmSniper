@@ -8,10 +8,7 @@ ColdPotatoImproved::ColdPotatoImproved(const PerformanceCounters *performanceCou
     : performanceCounters(performanceCounters),
       coreRows(coreRows),
       coreColumns(coreColumns),
-      criticalTemperature(criticalTemperature) {
-
-
-      }
+      criticalTemperature(criticalTemperature) {}
 
 
 std::vector<int> ColdPotatoImproved::map(String taskName, int taskCoreRequirement,
@@ -55,15 +52,12 @@ std::vector<migration> ColdPotatoImproved::migrate(
     std::stable_sort(
         temperatures.begin(), temperatures.end(),
         [](CoreTemp const& a, CoreTemp const& b) {
-            return a.temperature > b.temperature;   // descending by temperature
+            return a.temperature > b.temperature;
         }
     );
 
-
-
     for (int c = 0; c < coreRows * coreColumns; c++) {
         if (activeCores.at(c)) {
-
 
             float temperature = performanceCounters->getTemperatureOfCore(c);
             if (temperature > criticalTemperature || (prevTime == -1 || (time.getNS() - prevTime >= 5))) {
