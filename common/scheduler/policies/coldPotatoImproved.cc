@@ -56,30 +56,26 @@ std::vector<migration> ColdPotatoImproved::migrate(
         }
     );
 
-    for (int c = 0; c < coreRows * coreColumns; c++) {
-        if (activeCores.at(c)) {
+    if (temperatures.at(0).temperature > criticalTemperature) {
+        cout << "[Scheduler][coldPotatoImproved-migrate]: core" << temperatures.at(0).core_id << " too hot (";
+        cout << fixed << setprecision(1) << temperatures.at(0).temperature << ") -> migrate";
+        logTemperatures(availableCores);
 
-            float temperature = performanceCounters->getTemperatureOfCore(c);
-            if (temperature > criticalTemperature || (prevTime == -1 || (time.getNS() - prevTime >= 5))) {
-                cout << "[Scheduler][coldPotatoImproved-migrate]: core" << c
-                     << " too hot (";
-                cout << fixed << setprecision(1) << temperature
-                     << ") -> migrate";
-                logTemperatures(availableCores);
+        migration m;
+        m.fromCore = temperatures.at(0).core_id;
+        m.toCore = temperatures.at(3).core_id;
+        m.swap = true;
+        migrations.push_back(m);
+        availableCores.at(temperatures.at(3).core_id) = false;
 
-                for (int i = 0; i < 4; i++) {
-                    migration m;
-                    m.fromCore = i;
-                    m.toCore = (i + 1) % 4;
-                    m.swap = false;
-                    migrations.push_back(m);
-                    availableCores.at((i + 1) % 4) = false;
-                }
-
-                prevTime = time.getNS();
-            }
-        }
+        migration m2;
+        m2.fromCore = temperatures.at(1).core_id;
+        m2.toCore = temperatures.at(2).core_id;
+        m2.swap = true;
+        migrations.push_back(m2);
+        availableCores.at(temperatures.at(2).core_id) = false;
     }
+
     return migrations;
 }
 

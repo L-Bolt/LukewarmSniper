@@ -8,10 +8,7 @@ ColdPotato::ColdPotato(const PerformanceCounters *performanceCounters,
     : performanceCounters(performanceCounters),
       coreRows(coreRows),
       coreColumns(coreColumns),
-      criticalTemperature(criticalTemperature) {
-
-
-      }
+      criticalTemperature(criticalTemperature) {}
 
 
 std::vector<int> ColdPotato::map(String taskName, int taskCoreRequirement,
@@ -44,24 +41,19 @@ std::vector<migration> ColdPotato::migrate(
         availableCores.at(c) = taskIds.at(c) == -1;
     }
     for (int c = 0; c < coreRows * coreColumns; c++) {
-        uint64_t current_time = time.getNS();
         if (activeCores.at(c)) {
             float temperature = performanceCounters->getTemperatureOfCore(c);
             cout << "[Scheduler][coldPotato-migrate]: core" << c << " temperature (";
             cout << fixed << setprecision(1) << temperature << ") -> migrate";
             logTemperatures(availableCores);
-
-            for (int i = 0; i < 4; i++) {
-                migration m;
-                m.fromCore = i;
-                m.toCore = (i + 1) % 4;
-                m.swap = false;
-                migrations.push_back(m);
-                availableCores.at((i + 1) % 4) = false;
-            }
-
-            prevTime = current_time;
         }
+
+        migration m;
+        m.fromCore = c;
+        m.toCore = (c + 1) % 4;
+        m.swap = false;
+        migrations.push_back(m);
+        availableCores.at((c + 1) % 4) = false;
     }
     return migrations;
 }
