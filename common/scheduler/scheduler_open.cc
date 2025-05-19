@@ -21,6 +21,7 @@
 #include "policies/dvfsOndemand.h"
 #include "policies/coldestCore.h"
 #include "policies/coldPotato.h"
+#include "policies/coldPotatoImproved.h"
 
 #include <iomanip>
 #include <random>
@@ -303,6 +304,10 @@ void SchedulerOpen::initMappingPolicy(String policyName) {
 		float criticalTemperature = Sim()->getCfg()->getFloat("scheduler/open/migration/coldestCore/criticalTemperature");
 		mappingPolicy = new ColdPotato(performanceCounters, coreRows, coreColumns, criticalTemperature);
 	}
+	else if (policyName == "coldPotatoImproved") {
+		float criticalTemperature = Sim()->getCfg()->getFloat("scheduler/open/migration/coldestCore/criticalTemperature");
+		mappingPolicy = new ColdPotatoImproved(performanceCounters, coreRows, coreColumns, criticalTemperature);
+	}
 	else {
 		cout << "\n[Scheduler] [Error]: Unknown Mapping Algorithm" << endl;
  		exit (1);
@@ -372,6 +377,10 @@ void SchedulerOpen::initMigrationPolicy(String policyName) {
 	else if (policyName == "coldPotato") {
 		float criticalTemperature = Sim()->getCfg()->getFloat("scheduler/open/migration/coldestCore/criticalTemperature");
 		migrationPolicy = new ColdPotato(performanceCounters, coreRows, coreColumns, criticalTemperature);
+	}
+	else if (policyName == "coldPotatoImproved") {
+		float criticalTemperature = Sim()->getCfg()->getFloat("scheduler/open/migration/coldestCore/criticalTemperature");
+		migrationPolicy = new ColdPotatoImproved(performanceCounters, coreRows, coreColumns, criticalTemperature);
 	}
 	else {
 		cout << "\n[Scheduler] [Error]: Unknown Migration Algorithm" << endl;
