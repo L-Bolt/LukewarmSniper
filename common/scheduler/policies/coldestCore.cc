@@ -1,15 +1,15 @@
-#include "coldPotato.h"
+#include "coldestCore.h"
 
 #include <iomanip>
 using namespace std;
-ColdPotato::ColdPotato(const PerformanceCounters *performanceCounters,
+ColdestCore::ColdestCore(const PerformanceCounters *performanceCounters,
                          int coreRows, int coreColumns,
                          float criticalTemperature)
     : performanceCounters(performanceCounters),
       coreRows(coreRows),
       coreColumns(coreColumns),
       criticalTemperature(criticalTemperature) {}
-std::vector<int> ColdPotato::map(String taskName, int taskCoreRequirement,
+std::vector<int> ColdestCore::map(String taskName, int taskCoreRequirement,
                                   const std::vector<bool> &availableCoresRO,
                                   const std::vector<bool> &activeCores) {
     std::vector<bool> availableCores(availableCoresRO);
@@ -28,7 +28,7 @@ std::vector<int> ColdPotato::map(String taskName, int taskCoreRequirement,
     }
     return cores;
 }
-std::vector<migration> ColdPotato::migrate(
+std::vector<migration> ColdestCore::migrate(
     SubsecondTime time, const std::vector<int> &taskIds,
     const std::vector<bool> &activeCores) {
     std::vector<migration> migrations;
@@ -63,7 +63,7 @@ std::vector<migration> ColdPotato::migrate(
     }
     return migrations;
 }
-int ColdPotato::getColdestCore(const std::vector<bool> &availableCores) {
+int ColdestCore::getColdestCore(const std::vector<bool> &availableCores) {
     int coldestCore = -1;
     float coldestTemperature = 0;
     // iterate all cores to find coldest
@@ -78,7 +78,7 @@ int ColdPotato::getColdestCore(const std::vector<bool> &availableCores) {
     }
     return coldestCore;
 }
-void ColdPotato::logTemperatures(const std::vector<bool> &availableCores) {
+void ColdestCore::logTemperatures(const std::vector<bool> &availableCores) {
     cout << "[Scheduler][coldestCore-map]: temperatures of available cores:"
          << endl;
     for (int y = 0; y < coreRows; y++) {

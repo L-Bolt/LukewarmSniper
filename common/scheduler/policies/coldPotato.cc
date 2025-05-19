@@ -1,22 +1,27 @@
-#include "coldestCore.h"
+#include "coldPotato.h"
 
 #include <iomanip>
 using namespace std;
-ColdestCore::ColdestCore(const PerformanceCounters *performanceCounters,
+ColdPotato::ColdPotato(const PerformanceCounters *performanceCounters,
                          int coreRows, int coreColumns,
                          float criticalTemperature)
     : performanceCounters(performanceCounters),
       coreRows(coreRows),
       coreColumns(coreColumns),
-      criticalTemperature(criticalTemperature) {}
-std::vector<int> ColdestCore::map(String taskName, int taskCoreRequirement,
+      criticalTemperature(criticalTemperature) {
+
+
+      }
+
+
+std::vector<int> ColdPotato::map(String taskName, int taskCoreRequirement,
                                   const std::vector<bool> &availableCoresRO,
                                   const std::vector<bool> &activeCores) {
     std::vector<bool> availableCores(availableCoresRO);
     std::vector<int> cores;
     logTemperatures(availableCores);
     for (; taskCoreRequirement > 0; taskCoreRequirement--) {
-        int coldestCore = getColdestCore(availableCores);
+        int coldestCore = getCore(availableCores);
         if (coldestCore == -1) {
             // not enough free cores
             std::vector<int> empty;
@@ -28,7 +33,8 @@ std::vector<int> ColdestCore::map(String taskName, int taskCoreRequirement,
     }
     return cores;
 }
-std::vector<migration> ColdestCore::migrate(
+
+std::vector<migration> ColdPotato::migrate(
     SubsecondTime time, const std::vector<int> &taskIds,
     const std::vector<bool> &activeCores) {
     std::vector<migration> migrations;
@@ -63,7 +69,8 @@ std::vector<migration> ColdestCore::migrate(
     }
     return migrations;
 }
-int ColdestCore::getColdestCore(const std::vector<bool> &availableCores) {
+
+int ColdPotato::getColdestCore(const std::vector<bool> &availableCores) {
     int coldestCore = -1;
     float coldestTemperature = 0;
     // iterate all cores to find coldest
@@ -78,7 +85,18 @@ int ColdestCore::getColdestCore(const std::vector<bool> &availableCores) {
     }
     return coldestCore;
 }
-void ColdestCore::logTemperatures(const std::vector<bool> &availableCores) {
+
+int ColdPotato::getCore(const std::vector<bool> &availableCores) {
+    // Get the first free core.
+    for (int c = 0; c < coreRows * coreColumns; c++) {
+        if (availableCores.at(c)) {
+            return c;
+        }
+    }
+    return -1;
+}
+
+void ColdPotato::logTemperatures(const std::vector<bool> &availableCores) {
     cout << "[Scheduler][coldestCore-map]: temperatures of available cores:"
          << endl;
     for (int y = 0; y < coreRows; y++) {

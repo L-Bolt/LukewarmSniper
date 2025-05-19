@@ -27,6 +27,7 @@ class ColdPotato : public MappingPolicy, public MigrationPolicy {
     unsigned int coreColumns;
     float criticalTemperature;
     int getColdestCore(const std::vector<bool> &availableCores);
+    int getCore(const std::vector<bool> &availableCores);
     void logTemperatures(const std::vector<bool> &availableCores);
 };
 #endif
