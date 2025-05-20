@@ -55,22 +55,20 @@ std::vector<migration> ColdPotato::migrate(
     int firstFreeCore = getFirstFreeCore(availableCores);
 
     for (int c = 0; c < coreRows * coreColumns; c++) {
-        if (activeCores.at(c)) {
-            float temperature = performanceCounters->getTemperatureOfCore(c);
-            cout << "[Scheduler][coldPotato-migrate]: core" << c << " temperature (";
-            cout << fixed << setprecision(1) << temperature << ") -> migrate";
-            logTemperatures(availableCores);
+        float temperature = performanceCounters->getTemperatureOfCore(c);
+        cout << "[Scheduler][coldPotato-migrate]: core" << c << " temperature (";
+        cout << fixed << setprecision(1) << temperature << ") -> migrate";
+        logTemperatures(availableCores);
 
-            migration m;
-            int next_core = (4 + ((firstFreeCore - 1) % 4)) % 4;
-            m.fromCore = next_core;
-            m.toCore = firstFreeCore;
-            m.swap = false;
-            migrations.push_back(m);
-            availableCores.at(firstFreeCore) = false;
-            availableCores.at(next_core) = true;
-            firstFreeCore = next_core;
-        }
+        migration m;
+        int next_core = (4 + ((firstFreeCore - 1) % 4)) % 4;
+        m.fromCore = next_core;
+        m.toCore = firstFreeCore;
+        m.swap = false;
+        migrations.push_back(m);
+        availableCores.at(firstFreeCore) = false;
+        availableCores.at(next_core) = true;
+        firstFreeCore = next_core;
     }
     return migrations;
 }
