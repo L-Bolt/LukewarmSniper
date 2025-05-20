@@ -6,6 +6,7 @@ core
 #ifndef __COLDPOTATOIMPROVED_H
 #define __COLDPOTATOIMPROVED_H
 #include <vector>
+#include <algorithm>
 
 #include "mappingpolicy.h"
 #include "migrationpolicy.h"

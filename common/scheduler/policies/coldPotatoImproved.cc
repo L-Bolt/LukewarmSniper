@@ -61,19 +61,40 @@ std::vector<migration> ColdPotatoImproved::migrate(
         cout << fixed << setprecision(1) << temperatures.at(0).temperature << ") -> migrate";
         logTemperatures(availableCores);
 
-        migration m;
-        m.fromCore = temperatures.at(0).core_id;
-        m.toCore = temperatures.at(3).core_id;
-        m.swap = true;
-        migrations.push_back(m);
-        availableCores.at(temperatures.at(3).core_id) = false;
+        if (taskIds.at(temperatures.at(0).core_id) != -1 && taskIds.at(temperatures.at(3).core_id) != -1) {
+            migration m;
+            m.fromCore = temperatures.at(0).core_id;
+            m.toCore = temperatures.at(3).core_id;
+            m.swap = true;
+            migrations.push_back(m);
+            availableCores.at(temperatures.at(3).core_id) = false;
+        }
+        else if (taskIds.at(temperatures.at(0).core_id) != -1 && taskIds.at(temperatures.at(3).core_id) == -1) {
+            migration m;
+            m.fromCore = temperatures.at(0).core_id;
+            m.toCore = temperatures.at(3).core_id;
+            m.swap = false;
+            migrations.push_back(m);
+            availableCores.at(temperatures.at(3).core_id) = false;
+        }
 
-        migration m2;
-        m2.fromCore = temperatures.at(1).core_id;
-        m2.toCore = temperatures.at(2).core_id;
-        m2.swap = true;
-        migrations.push_back(m2);
-        availableCores.at(temperatures.at(2).core_id) = false;
+
+        if (taskIds.at(temperatures.at(1).core_id) != -1 && taskIds.at(temperatures.at(2).core_id) != -1) {
+            migration m2;
+            m2.fromCore = temperatures.at(1).core_id;
+            m2.toCore = temperatures.at(2).core_id;
+            m2.swap = true;
+            migrations.push_back(m2);
+            availableCores.at(temperatures.at(2).core_id) = false;
+        }
+        else if (taskIds.at(temperatures.at(1).core_id) != -1 && taskIds.at(temperatures.at(2).core_id) == -1) {
+            migration m2;
+            m2.fromCore = temperatures.at(1).core_id;
+            m2.toCore = temperatures.at(2).core_id;
+            m2.swap = false;
+            migrations.push_back(m2);
+            availableCores.at(temperatures.at(2).core_id) = false;
+        }
     }
 
     return migrations;

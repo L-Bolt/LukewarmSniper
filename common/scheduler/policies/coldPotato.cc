@@ -31,6 +31,17 @@ std::vector<int> ColdPotato::map(String taskName, int taskCoreRequirement,
     return cores;
 }
 
+int ColdPotato::getFirstFreeCore(std::vector<bool> &availableCores) {
+    for (int i = 0; i < 4; i++) {
+        if (availableCores.at(i)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
 std::vector<migration> ColdPotato::migrate(
     SubsecondTime time, const std::vector<int> &taskIds,
     const std::vector<bool> &activeCores) {
@@ -40,20 +51,26 @@ std::vector<migration> ColdPotato::migrate(
     for (int c = 0; c < coreRows * coreColumns; c++) {
         availableCores.at(c) = taskIds.at(c) == -1;
     }
+
+    int firstFreeCore = getFirstFreeCore(availableCores);
+
     for (int c = 0; c < coreRows * coreColumns; c++) {
         if (activeCores.at(c)) {
             float temperature = performanceCounters->getTemperatureOfCore(c);
             cout << "[Scheduler][coldPotato-migrate]: core" << c << " temperature (";
             cout << fixed << setprecision(1) << temperature << ") -> migrate";
             logTemperatures(availableCores);
-        }
 
-        migration m;
-        m.fromCore = c;
-        m.toCore = (c + 1) % 4;
-        m.swap = false;
-        migrations.push_back(m);
-        availableCores.at((c + 1) % 4) = false;
+            migration m;
+            int next_core = (4 + ((firstFreeCore - 1) % 4)) % 4;
+            m.fromCore = next_core;
+            m.toCore = firstFreeCore;
+            m.swap = false;
+            migrations.push_back(m);
+            availableCores.at(firstFreeCore) = false;
+            availableCores.at(next_core) = true;
+            firstFreeCore = next_core;
+        }
     }
     return migrations;
 }

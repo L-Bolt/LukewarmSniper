@@ -408,17 +408,13 @@ def test_multiprogramming():
     run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-1,parsec-blackscholes-simsmall-1')
 
 def main():
-    # example()
-    test_multithreaded([2, 3, 4])
-    test_dvfs(['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['3.0GHz', '4.0GHz', '5.0GHz'])
-    test_thread_migration(['80cc', '70cc', '60cc'], ['slowDVFS', 'mediumDVFS', 'fastDVFS'], ['2.0GHz', '4.0GHz'])
-    test_multiprogramming()
-    # ondemand_demo()
-    #test_static_power()
-    # multi_program()
+    run(['2.4GHz', 'maxFreq', 'slowDVFS', 'coldPotato'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+    # run(['2.4GHz', 'maxFreq', 'slowDVFS', 'coldPotato'], 'parsec-streamcluster-simsmall-1,parsec-streamcluster-simsmall-1')
+    # run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldPotatoImproved'], 'parsec-streamcluster-simsmall-1,parsec-streamcluster-simsmall-1')
 
-    # example_symmetric_perforation()
-    # example_asymmetric_perforation()
+    # run(['4.0GHz', 'maxFreq', 'slowDVFS'], 'parsec-streamcluster-simsmall-1,parsec-streamcluster-simsmall-1')
+    # run(['3.0GHz', 'maxFreq', 'slowDVFS', 'coldPotatoImproved'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+
 
 if __name__ == '__main__':
     main()
